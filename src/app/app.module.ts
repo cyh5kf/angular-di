@@ -22,13 +22,7 @@ import { AnotherProductService } from './shared/another-product.service';
   // providers: [ProductService, LoggerService],  // 提供器
   providers: [{
     provide: ProductService,
-    useFactory: (logger: LoggerService, appConfig) => {  // 使用工厂方法提供器，注意在这里声明的实例化对象，在整个应用中调用的对象都是同一个
-      if(appConfig.isDev) {
-        return new ProductService(logger);
-      } else {
-        return new AnotherProductService(logger);
-      }
-    },
+    useFactory: provideFactory,  // 使用工厂方法提供器，注意在这里声明的实例化对象，在整个应用中调用的对象都是同一个
     deps: [LoggerService, "APP_CONFIG"]  // 在deps里声明需要依赖的服务并实例化对象，通过参数传入工厂方法提供器
   }, LoggerService,
     {
@@ -39,3 +33,11 @@ import { AnotherProductService } from './shared/another-product.service';
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+
+export function provideFactory(logger: LoggerService, appConfig) {
+  if(appConfig.isDev) {
+    return new ProductService(logger);
+  } else {
+    return new AnotherProductService(logger);
+  }
+}
